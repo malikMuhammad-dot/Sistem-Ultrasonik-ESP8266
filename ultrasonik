@@ -1,0 +1,58 @@
+#include <Servo.h>
+
+// Pin Ultrasonik
+#define TRIG_PIN D5
+#define ECHO_PIN D6
+
+// Pin Servo
+#define SERVO_PIN D4
+
+Servo myServo;
+
+long duration;
+int distance;
+
+void setup()
+{
+  Serial.begin(9600);
+
+  pinMode(TRIG_PIN, OUTPUT);
+  pinMode(ECHO_PIN, INPUT);
+
+  myServo.attach(SERVO_PIN);
+  myServo.write(0); // Posisi awal servo
+}
+
+void loop()
+{
+  // Mengirim gelombang ultrasonik
+  digitalWrite(TRIG_PIN, LOW);
+  delayMicroseconds(2);
+
+  digitalWrite(TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+
+  digitalWrite(TRIG_PIN, LOW);
+
+  // Membaca pantulan
+  duration = pulseIn(ECHO_PIN, HIGH);
+
+  // Menghitung jarak
+  distance = duration * 0.034 / 2;
+
+  Serial.print("Jarak: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Kondisi servo
+  if (distance <= 10)
+  {
+    myServo.write(90); // Servo bergerak 90 derajat
+  }
+  else
+  {
+    myServo.write(0); // Kembali ke posisi awal
+  }
+
+  delay(500);
+}
